@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小叶专用跳转站</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui, sans-serif;}
+body{background:#111;color:#fff;}
+.header{position:fixed;top:8px;left:12px;font-size:20px;font-weight:bold;z-index:100;color:#4cf;}
+/* 登录容器 */
+.login-wrap{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;}
+.login-box{background:#222;padding:30px;border-radius:12px;border:1px solid #444;min-width:320px;}
+.login-box h2{text-align:center;margin-bottom:20px;color:#4cf;}
+.login-box input{width:100%;padding:10px;margin:8px 0;border:none;border-radius:6px;background:#333;color:#fff;font-size:16px;outline:none;}
+.login-box .btn-row{display:flex;gap:10px;margin-top:14px;}
+.login-box button{flex:1;padding:10px;border:none;border-radius:6px;font-size:15px;cursor:pointer;}
+#loginBtn{background:#0088ff;color:#fff;}
+#regBtn{background:#666;color:#fff;}
+/* 主页面容器，左右对半分 */
+.main-wrap{display:none;width:100vw;height:100vh;grid-template-columns:1fr 1fr;display:grid;}
+.panel{padding:60px 20px;border:1px solid #333;overflow:auto;}
+.panel h3{font-size:22px;margin-bottom:20px;color:#4cf;}
+.link-btn{display:block;width:100%;padding:14px;margin:10px 0;border:none;border-radius:8px;background:#2277dd;color:#fff;font-size:16px;cursor:pointer;transition:0.2s;}
+.link-btn:hover{background:#1455aa;}
+</style>
+<!-- 引入sha256哈希工具 -->
+<script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
+</head>
+<body>
+<div class="header">小叶专用跳转站</div>
+
+<!-- 登录界面 -->
+<div class="login-wrap" id="loginPage">
+  <div class="login-box">
+    <h2>登录验证</h2>
+    <input type="text" id="user" placeholder="账号">
+    <input type="password" id="pwd" placeholder="密码">
+    <div class="btn-row">
+      <button id="loginBtn">登录</button>
+      <button id="regBtn">注册</button>
+    </div>
+  </div>
+</div>
+
+<!-- 跳转主页（左右分栏） -->
+<div class="main-wrap" id="homePage">
+  <div class="panel">
+    <h3>主</h3>
+    <button class="link-btn" data-url="https://baixxue.nocode.host">白雪主站</button>
+    <button class="link-btn" data-url="https://baixue.kicp.fun">验证站</button>
+    <button class="link-btn" data-url="https://mimacs.gicp.fun">密码测试</button>
+    <button class="link-btn" data-url="https://tempmail.gicp.fun">临时邮箱</button>
+    <button class="link-btn" data-url="https://cloudflare.com">Cloudflare</button>
+    <button class="link-btn" data-url="https://www.bilibili.com/toy/gGPYh2RHiV8Wvp1A/index.html">Bilibili toy</button>
+  </div>
+  <div class="panel">
+    <h3>备用</h3>
+    <button class="link-btn" data-url="这里填网址">备用1</button>
+    <button class="link-btn" data-url="这里填网址">备用2</button>
+    <button class="link-btn" data-url="这里填网址">备用3</button>
+    <button class="link-btn" data-url="这里填网址">备用4</button>
+    <button class="link-btn" data-url="这里填网址">备用5</button>
+  </div>
+</div>
+
+<script>
+const loginPage = document.getElementById('loginPage');
+const homePage = document.getElementById('homePage');
+const userInput = document.getElementById('user');
+const pwdInput = document.getElementById('pwd');
+const loginBtn = document.getElementById('loginBtn');
+const regBtn = document.getElementById('regBtn');
+const linkBtns = document.querySelectorAll('.link-btn');
+
+// admin 的sha256哈希值，不再写明文账号密码
+const USER_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
+const PASS_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
+
+loginBtn.onclick = ()=>{
+  const u = userInput.value.trim();
+  const p = pwdInput.value.trim();
+  const uHash = CryptoJS.SHA256(u).toString();
+  const pHash = CryptoJS.SHA256(p).toString();
+  if(uHash === USER_HASH && pHash === PASS_HASH){
+    loginPage.style.display = 'none';
+    homePage.style.display = 'grid';
+  }else{
+    alert('账号或密码错误！');
+  }
+}
+// 回车登录
+pwdInput.onkeydown = e=>{if(e.key==='Enter') loginBtn.click();}
+
+// 注册按钮弹窗
+regBtn.onclick = ()=>{
+  alert('你又不是管理员，看什么看！O∧O');
+}
+
+// 跳转按钮
+linkBtns.forEach(btn=>{
+  btn.onclick = ()=>{
+    window.open(btn.dataset.url, '_blank');
+  }
+})
+</script>
+</body>
+</html>
